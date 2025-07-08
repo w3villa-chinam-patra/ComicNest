@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  username          String?
+  firstName         String?
+  lastName          String?
+  address           String?
+  profilePhoto      String?
+  passwordHash      String
+  emailVerified     Boolean  @default(false)
+  emailVerifiedAt   DateTime?
+  mobileNumber      String?  @unique
+  mobileVerified    Boolean  @default(false)
+  mobileVerifiedAt  DateTime?
+  role              Role     @default(USER)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  otpVerifications  OTPVerification[]
+  subscriptions     Subscription[]
+  nextAction        NextAction @default(EMAIL_VERIFICATION)
+}
+
+model OTPVerification {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  otp        String
+  expiresAt  DateTime
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model SubscriptionTier {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  price       Float
+  durationDays Int     
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  tier           SubscriptionTier @relation(fields: [tierId], references: [id])
+  tierId         String
+  startsAt       DateTime @default(now())
+  endsAt         DateTime
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum NextAction {
+  EMAIL_VERIFICATION
+  MOBILE_VERIFICATION
+  PROFILE_COMPLETION
+  PHOTO_UPLOAD
+  NONE
+}
