@@ -24,7 +24,7 @@ model User {
   lastName          String?
   address           String?
   profilePhoto      String?
-  passwordHash      String
+  password          String
   emailVerified     Boolean  @default(false)
   emailVerifiedAt   DateTime?
   mobileNumber      String?  @unique

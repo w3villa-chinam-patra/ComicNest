@@ -5,4 +5,5 @@ export const appConstants = {
     ZERO: 0,
     ONE: 1,
   },
+  BCRYPT_SALT_ROUNDS_DEFAULT: 10,
 };

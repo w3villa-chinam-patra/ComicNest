@@ -7,7 +7,7 @@ export class AppError extends Error {
     statusCode = errorMessages.INTERNAL_SERVER_ERROR.statusCode,
     message = errorMessages.INTERNAL_SERVER_ERROR.message,
   }: {
-    statusCode: number;
+    statusCode?: number;
     message: string;
   }) {
     super(message);

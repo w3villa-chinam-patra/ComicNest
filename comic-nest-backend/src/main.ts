@@ -2,9 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonLoggerOptions } from './logger/winston.logger';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ResponseInterceptor } from './common/interceptors';
+import { AllExceptionsFilter } from './common/filters';
+import { appConstants } from './common/constants';
 
 async function bootstrap() {
   // logger config
@@ -17,6 +19,16 @@ async function bootstrap() {
 
   // use of response interceptor
   app.useGlobalInterceptors(new ResponseInterceptor());
+
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: appConstants.TRUTHY_FALSY_VALUES.TRUE,
+      forbidNonWhitelisted: appConstants.TRUTHY_FALSY_VALUES.TRUE,
+      transform: appConstants.TRUTHY_FALSY_VALUES.TRUE,
+    }),
+  );
 
   const PORT = configService.get('PORT') || 3000;
   await app.listen(PORT);

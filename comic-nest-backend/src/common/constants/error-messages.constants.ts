@@ -6,4 +6,10 @@ export const errorMessages = {
     message:
       'An unexpected error occurred on the server. Please try again later or contact support if the issue persists.',
   },
+  INVALID_BODY_PARAMS: {
+    message: 'Request body contains invalid or missing fields.',
+  },
+  INVALID_URL_PARAMS: {
+    message: 'Invalid or missing URL parameters.',
+  },
 };
