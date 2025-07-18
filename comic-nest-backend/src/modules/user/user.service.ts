@@ -3,6 +3,8 @@ import { DatabaseService } from 'src/database/database.service';
 import { plainToInstance } from 'class-transformer';
 import { appConstants } from 'src/common/constants';
 import { CreateUserDto, ResponseUserDto, UpdateUserDto } from './dto';
+import { AppError } from 'src/common/errors';
+import { NextAction } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -33,10 +35,10 @@ export class UserService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, data: object) {
     const updatedUser = await this.databaseService.user.update({
       where: { id },
-      data: updateUserDto,
+      data: data,
     });
     return plainToInstance(ResponseUserDto, updatedUser, {
       excludeExtraneousValues: appConstants.TRUTHY_FALSY_VALUES.TRUE,
@@ -49,6 +51,33 @@ export class UserService {
     });
     return plainToInstance(ResponseUserDto, deletedUser, {
       excludeExtraneousValues: appConstants.TRUTHY_FALSY_VALUES.TRUE,
+    });
+  }
+
+  async findOneByEmail(email: string) {
+    const user = await this.databaseService.user.findUnique({
+      where: { email },
+    });
+    return plainToInstance(ResponseUserDto, user, {
+      excludeExtraneousValues: appConstants.TRUTHY_FALSY_VALUES.TRUE,
+    });
+  }
+
+  async findByIdOrThrow(
+    id: string,
+    errorMessageAndStatusCode: { statusCode?: number; message: string },
+  ) {
+    const isUserExists = await this.findOne(id);
+    if (!isUserExists) {
+      throw new AppError(errorMessageAndStatusCode);
+    }
+    return isUserExists;
+  }
+
+  async updateUserProfile(id: string, data: object) {
+    await this.databaseService.user.update({
+      where: { id },
+      data: { ...data, nextAction: NextAction.PHOTO_UPLOAD },
     });
   }
 }

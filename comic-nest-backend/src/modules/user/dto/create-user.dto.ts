@@ -14,8 +14,7 @@ import { Expose } from 'class-transformer';
 
 export class CreateUserDto {
   @Expose()
-  @IsOptional()
-  id: string
+  id?: string
   
   @Expose()
   @IsEmail({}, { message: 'Email must be valid.' })
@@ -46,9 +45,10 @@ export class CreateUserDto {
   @IsString()
   profilePhoto?: string;
 
+  @IsOptional()
   @IsNotEmpty({ message: 'Password is required.' })
   @Length(6, 100, { message: 'Password must be at least 6 characters.' })
-  password: string;
+  password?: string;
 
   @Expose()
   @IsOptional()

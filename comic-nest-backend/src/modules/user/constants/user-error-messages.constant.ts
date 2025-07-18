@@ -5,4 +5,7 @@ export const userErrorMessages = {
     statusCode: HttpStatus.NOT_FOUND,
     message: 'User not found',
   },
+  PROFILE_UPDATE_FAILED: {
+    message: 'Failed to update the profile. Please try again later.',
+  },
 };

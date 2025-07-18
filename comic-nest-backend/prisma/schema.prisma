@@ -6,8 +6,8 @@
 
 // prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   // uncomment next line if you use Prisma <5.10
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
@@ -17,56 +17,72 @@ generator client {
 }
 
 model User {
+  id                 String             @id @default(uuid())
+  email              String             @unique
+  username           String?
+  firstName          String?
+  lastName           String?
+  address            String?
+  latitude           Float?
+  longitude          Float?
+  profilePhoto       String?
+  password           String?
+  emailVerified      Boolean            @default(false)
+  emailVerifiedAt    DateTime?
+  mobileNumber       String?            @unique
+  mobileVerified     Boolean            @default(false)
+  mobileVerifiedAt   DateTime?
+  role               Role               @default(USER)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  emailVerifications EmailVerification?
+  otpVerifications   OTPVerification[]
+  subscriptions      Subscription[]
+  nextAction         NextAction         @default(EMAIL_VERIFICATION)
+}
+
+model EmailVerification {
   id                String   @id @default(uuid())
-  email             String   @unique
-  username          String?
-  firstName         String?
-  lastName          String?
-  address           String?
-  profilePhoto      String?
-  password          String
-  emailVerified     Boolean  @default(false)
-  emailVerifiedAt   DateTime?
-  mobileNumber      String?  @unique
-  mobileVerified    Boolean  @default(false)
-  mobileVerifiedAt  DateTime?
-  role              Role     @default(USER)
+  user              User     @relation(fields: [userId], references: [id])
+  userId            String   @unique
+  verificationToken String   @unique
+  retryCount        Int      @default(0)
+  lastSentAt        DateTime @default(now())
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  otpVerifications  OTPVerification[]
-  subscriptions     Subscription[]
-  nextAction        NextAction @default(EMAIL_VERIFICATION)
 }
 
 model OTPVerification {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [userId], references: [id])
-  userId     String
+  userId     String   @unique
   otp        String
   expiresAt  DateTime
   verified   Boolean  @default(false)
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  retryCount Int      @default(0)
 }
 
 model SubscriptionTier {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String?
-  price       Float
-  durationDays Int     
+  id            String         @id @default(uuid())
+  name          String         @unique
+  description   String?
+  price         Float
+  durationDays  Int
   subscriptions Subscription[]
 }
 
 model Subscription {
-  id             String   @id @default(uuid())
-  user           User     @relation(fields: [userId], references: [id])
-  userId         String
-  tier           SubscriptionTier @relation(fields: [tierId], references: [id])
-  tierId         String
-  startsAt       DateTime @default(now())
-  endsAt         DateTime
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
+  id        String           @id @default(uuid())
+  user      User             @relation(fields: [userId], references: [id])
+  userId    String
+  tier      SubscriptionTier @relation(fields: [tierId], references: [id])
+  tierId    String
+  startsAt  DateTime         @default(now())
+  endsAt    DateTime
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
 }
 
 enum Role {

@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { ResponseInterceptor } from './common/interceptors';
 import { AllExceptionsFilter } from './common/filters';
 import { appConstants } from './common/constants';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   // logger config
@@ -20,7 +21,20 @@ async function bootstrap() {
   // use of response interceptor
   app.useGlobalInterceptors(new ResponseInterceptor());
 
+  // use of exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  // setting the global prefix
+  app.setGlobalPrefix('api');
+
+  // cors configuration
+  app.enableCors({
+    origin: configService.get<string>('FRONTEND_BASE_URL'),
+    credentials: appConstants.TRUTHY_FALSY_VALUES.TRUE,
+  });
+
+  // cookie parser middleware enables cookie parsing
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({

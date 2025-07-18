@@ -4,4 +4,5 @@ export const userSuccessMessages = {
   READ_ALL: 'Users retrieved successfully.',
   UPDATE: 'User updated successfully.',
   DELETE: 'User deleted successfully.',
+  PROFILE_UPDATE_SUCCESS: 'Profile updated successfully.',
 };

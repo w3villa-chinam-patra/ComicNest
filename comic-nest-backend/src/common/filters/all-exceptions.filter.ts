@@ -45,6 +45,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorResponse: ErrorResponse = {
       isSuccess: appConstants.TRUTHY_FALSY_VALUES.FALSE,
       message,
+      statusCode
     };
 
     // Log with contextual details
