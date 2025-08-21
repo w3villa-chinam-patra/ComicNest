@@ -1,0 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Bangers&display=swap");
+@import "tailwindcss";
+@import 'leaflet/dist/leaflet.css';
+
+
+.text-stroke {
+  -webkit-text-stroke: 3px black;
+  color: white;
+}
+
+@theme {
+  --font-comic: "Bangers", sans-serif;
+}
