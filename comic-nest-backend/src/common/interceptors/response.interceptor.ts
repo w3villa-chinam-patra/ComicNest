@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Request, Response } from 'express';
 import { appConstants, successMessages } from '../constants';
+import { SuccessResponse } from '../types';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
@@ -21,7 +22,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
 
     return next.handle().pipe(
       map((data) => {
-        const responsePayload = {
+        const responsePayload: SuccessResponse = {
           isSuccess: appConstants.TRUTHY_FALSY_VALUES.TRUE,
           statusCode: res.statusCode,
           message: data?.message || successMessages.SUCCESS_RESPONSE,
